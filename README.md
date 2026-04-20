@@ -1,2 +1,3 @@
-# llm-firewall
-An LLM Guradrail - INFO5940 Final Project
+# LLM Firewall
+INFO-5940 Final Project  
+An LLM Guradrail

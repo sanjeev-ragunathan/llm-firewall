@@ -3,4 +3,4 @@
 
 An LLM Guardrail.  
 
-cheesywasp = swiss cheese + owasp
+*cheesywasp = swiss cheese + owasp*

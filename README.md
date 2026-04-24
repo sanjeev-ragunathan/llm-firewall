@@ -4,7 +4,7 @@
 
 An LLM guardrail. Inspects prompts and responses in real time to block prompt injection, jailbreaks, and data leakage.
 
-**cheesywasp** = swiss cheese + owasp
+*cheesywasp = swiss cheese + owasp*
 
 ---
 

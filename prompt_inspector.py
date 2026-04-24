@@ -6,8 +6,6 @@ Input Guardrail.
 import re
 from dataclasses import dataclass
 
-import requests
-
 # Add this at the top of prompt_inspector.py (after other imports)
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
@@ -131,7 +129,7 @@ def inspect_prompt_patterns(prompt: str) -> InspectionResult:
             return InspectionResult(
                 blocked=True,
                 threat_type="LLM02_PII_HIGH_RISK",
-                reason=f"High-risk PII detected (credit card / SSN / API key / password)",
+                reason="High-risk PII detected (credit card / SSN / API key / password)",
                 layer="L1_PATTERN"
             )
     
@@ -337,8 +335,8 @@ for prompt in full_test_prompts:
     if result.blocked:
         print(f"🚫 BLOCKED [{result.threat_type}] via {result.layer}")
     elif result.redactions:
-        print(f"🟡 REDACTED (PII removed, passed all checks)")
+        print("🟡 REDACTED (PII removed, passed all checks)")
     else:
-        print(f"✅ ALLOWED")
+        print("✅ ALLOWED")
     print(f"  Prompt: {prompt[:70]}")
     print()

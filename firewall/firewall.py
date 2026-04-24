@@ -9,8 +9,8 @@ import requests
 import time
 from dataclasses import dataclass
 
-from prompt_inspector import inspect_prompt
-from response_inspector import inspect_response
+from firewall.prompt_inspector import inspect_prompt
+from firewall.response_inspector import inspect_response
 
 
 @dataclass

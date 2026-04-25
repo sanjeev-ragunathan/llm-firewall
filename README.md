@@ -132,8 +132,7 @@ Then open `http://localhost:8000/docs` to try it interactively.
 
 ---
 
-## Why This Project
-
+## Why?
 Every technological revolution is followed by a safety revolution. After the Industrial Revolution, the next priority was worker safety. Today AI is accessible to everyone, and history is repeating itself - AI safety is the next wave.
 
 CheesyWasp is a prototype of that idea - using an LLM to protect an LLM.

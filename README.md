@@ -139,8 +139,10 @@ Every technological revolution is followed by a safety revolution. After the Ind
 
 CheesyWasp is a prototype of that idea - using an LLM to protect an LLM.
 
+<!--
 ---
 
 ## Learnings
 
 See [`LEARNINGS.md`](./LEARNINGS.md) for notes on AI safety principles and ML system design decisions that shaped this project.
+-->

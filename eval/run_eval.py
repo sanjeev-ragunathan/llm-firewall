@@ -3,27 +3,15 @@ eval/run_eval.py
 ----------------
 Runs an evaluation suite against the CheesyWasp firewall HTTP API.
 
-Records, per-prompt:
-    - dataset source + ground-truth label (harmful/benign)
-    - firewall decision (allowed / blocked, layer, threat type)
-    - per-layer + total latency (server-side, from the firewall's audit trail)
-    - client-side wall-clock (for sanity check)
-
-The firewall is expected to accept different *modes* (e.g. no firewall, L1
-only, full pipeline) via either an env var read at server boot or a query
-parameter. This script does NOT swap modes itself - run it once per
-configuration with a separately-launched server (or pass --mode-query-param).
+UPDATED: now captures the LLM's actual response text so a post-hoc refusal
+judge can determine which "allowed" requests were actually refused by the
+underlying model (true ASR) vs. complied with (real attack success).
 
 Usage:
     python -m eval.run_eval --output eval/results/full.csv
-    python -m eval.run_eval --output eval/results/l1_only.csv \\
-        --extra-param config=l1_only
-    python -m eval.run_eval --output eval/results/no_firewall.csv \\
-        --extra-param config=none
-
-Tip: start the server with FIREWALL_MODE={none|l1|full} and re-run this
-script with the matching --output name. The mode itself is NOT inferred from
-the CSV.
+    python -m eval.run_eval --output eval/results/no_firewall.csv
+    python -m eval.run_eval --output eval/results/full.csv \\
+        --n-advbench 50 --n-dolly 150     # reduced suite
 """
 
 from __future__ import annotations
@@ -38,7 +26,6 @@ from typing import List, Optional
 import requests
 from tqdm import tqdm
 
-# Make this script runnable both as `python -m eval.run_eval` and `python eval/run_eval.py`
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from eval.datasets import (  # noqa: E402
@@ -58,6 +45,7 @@ CSV_HEADER = [
     "blocked_by",
     "blocked_layer",
     "threat_type",
+    "llm_response",        # NEW: actual model output for refusal judging
     "prompt_inspect_ms",
     "llm_ms",
     "response_inspect_ms",
@@ -73,7 +61,6 @@ def run_prompt(
     extra_params: Optional[dict] = None,
     timeout: float = 120.0,
 ) -> dict:
-    """Send a single prompt to the firewall endpoint and return its JSON dict."""
     payload = {"prompt": prompt}
     if extra_params:
         payload.update(extra_params)
@@ -95,8 +82,16 @@ def run_prompt(
 
 
 def row_for(prompt: EvalPrompt, resp: dict) -> list:
-    """Flatten a firewall response into the CSV row schema."""
     meta = (resp.get("metadata") or {}).get("latency") or {}
+    # The firewall response stores the user-facing string in `response`,
+    # and the raw pre-redaction string in metadata.raw_llm_response.
+    # We capture the raw one so the refusal judge sees what the model
+    # actually generated, not the redacted version.
+    full_meta = resp.get("metadata") or {}
+    llm_response = full_meta.get("raw_llm_response") or resp.get("response") or ""
+    # Truncate to keep CSV manageable — refusal judge only needs the prefix
+    if llm_response:
+        llm_response = llm_response[:500].replace("\n", " ").replace("\r", " ")
     return [
         prompt.source,
         prompt.label,
@@ -106,6 +101,7 @@ def row_for(prompt: EvalPrompt, resp: dict) -> list:
         resp.get("blocked_by", ""),
         resp.get("blocked_layer", ""),
         resp.get("threat_type", ""),
+        llm_response,
         meta.get("prompt_inspection_ms", ""),
         meta.get("llm_latency_ms", ""),
         meta.get("response_inspection_ms", ""),
@@ -145,31 +141,14 @@ def parse_extra_params(items: List[str]) -> dict:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument(
-        "--endpoint",
-        default="http://localhost:8000/v1/chat",
-        help="Firewall HTTP endpoint",
-    )
-    ap.add_argument(
-        "--output",
-        required=True,
-        help="Output CSV path. Name it to match the config (e.g. full.csv).",
-    )
-    ap.add_argument(
-        "--datasets",
-        nargs="+",
-        choices=["jbb", "advbench", "dolly"],
-        default=["jbb", "advbench", "dolly"],
-        help="Which datasets to include.",
-    )
+    ap.add_argument("--endpoint", default="http://localhost:8000/v1/chat")
+    ap.add_argument("--output", required=True)
+    ap.add_argument("--datasets", nargs="+",
+                    choices=["jbb", "advbench", "dolly"],
+                    default=["jbb", "advbench", "dolly"])
     ap.add_argument("--n-advbench", type=int, default=100)
     ap.add_argument("--n-dolly", type=int, default=500)
-    ap.add_argument(
-        "--extra-param",
-        action="append",
-        default=[],
-        help="Additional JSON fields, e.g. --extra-param config=full",
-    )
+    ap.add_argument("--extra-param", action="append", default=[])
     args = ap.parse_args()
 
     prompts: List[EvalPrompt] = []

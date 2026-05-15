@@ -68,6 +68,9 @@ def load_direct_injection(n: int | None = None, seed: int = 42) -> List[EvalProm
         text = r.get("text") or ""
         if not text.strip():
             continue
+        # Filter to English only - simple ASCII heuristic, good enough for this dataset
+        if sum(1 for c in text if ord(c) > 127) > len(text) * 0.05:
+            continue
         lbl = int(r.get("label", 0))
         out.append(EvalPrompt(
             text=text,
@@ -135,42 +138,39 @@ def load_indirect_injection(n: int = 200, seed: int = 42) -> List[EvalPrompt]:
 # =============================================================================
 def load_inbound_pii(n: int = 200, seed: int = 42) -> List[EvalPrompt]:
     """
-    ai4privacy/pii-masking-200k - english subset.
-    Each row has unmasked_text (contains PII) + privacy_mask describing the
-    PII spans. We use unmasked_text as the prompt and expected_pii as
-    ground-truth labels.
-
-    Schema: unmasked_text, masked_text, privacy_mask (JSON-encoded list),
-            span_labels, bio_labels, tokenised_text, language.
+    ai4privacy/pii-masking-200k - English subset filter.
+    Schema: source_text (PII-containing), target_text (masked version),
+    privacy_mask (list of {value, start, end, label} dicts), language.
     """
     from datasets import load_dataset
 
     ds = load_dataset("ai4privacy/pii-masking-200k", split="train")
-    # Filter to English to keep things tractable
     rows = [r for r in ds if r.get("language", "en") == "en"]
     random.Random(seed).shuffle(rows)
     rows = rows[:n]
 
     out: List[EvalPrompt] = []
     for r in rows:
-        text = r.get("unmasked_text") or ""
+        text = r.get("source_text") or ""
         if not text.strip():
             continue
-        # Parse privacy_mask (it's a JSON string) to extract PII labels
+        # privacy_mask is already a list of dicts in this dataset, not a JSON string
         pii_types: List[str] = []
-        pm = r.get("privacy_mask")
-        if pm:
+        pm = r.get("privacy_mask") or []
+        if isinstance(pm, str):
             try:
-                parsed = json.loads(pm) if isinstance(pm, str) else pm
-                if isinstance(parsed, list):
-                    pii_types = sorted({item.get("label", "") for item in parsed if isinstance(item, dict)})
-                elif isinstance(parsed, dict):
-                    pii_types = sorted(parsed.keys())
+                pm = json.loads(pm)
             except Exception:
-                pass
+                pm = []
+        if isinstance(pm, list):
+            pii_types = sorted({
+                item.get("label", "")
+                for item in pm
+                if isinstance(item, dict) and item.get("label")
+            })
         out.append(EvalPrompt(
             text=text,
-            label="attack",                # every row in this dataset contains PII
+            label="attack",
             source="ai4privacy/pii-masking-200k",
             track="inbound_pii",
             behavior="pii_present",

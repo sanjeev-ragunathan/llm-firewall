@@ -12,6 +12,31 @@ from dataclasses import dataclass
 from firewall.prompt_inspector import inspect_prompt
 from firewall.response_inspector import inspect_response
 
+import os
+from types import SimpleNamespace
+
+# Evaluation mode — controls which inspection layers are active.
+# Set via env var before starting the server:
+#   FIREWALL_MODE=none  → bypass all inspection (raw LLM baseline)
+#   FIREWALL_MODE=full  → L1 patterns + L2 classifier (default)
+FIREWALL_MODE = os.getenv("FIREWALL_MODE", "full").lower()
+
+
+def _passthrough_prompt():
+    """Fake prompt inspection result — everything allowed, nothing redacted."""
+    return SimpleNamespace(
+        blocked=False, layer=None, threat_type=None,
+        reason=None, redacted_prompt=None, redactions=[],
+    )
+
+
+def _passthrough_response():
+    """Fake response inspection result — everything allowed, nothing redacted."""
+    return SimpleNamespace(
+        blocked=False, layer=None, threat_type=None,
+        reason=None, redacted_response=None, redactions=[],
+    )
+
 
 @dataclass
 class FirewallResult:
@@ -65,7 +90,7 @@ def process_request(user_prompt: str, model: str = "llama3.2:1b") -> FirewallRes
     
     # ==================== Stage 1: Prompt Inspection ====================
     start = time.time()
-    prompt_result = inspect_prompt(user_prompt)
+    prompt_result = _passthrough_prompt() if FIREWALL_MODE == "none" else inspect_prompt(user_prompt)
     prompt_ms = (time.time() - start) * 1000
     
     if prompt_result.blocked:
@@ -117,7 +142,7 @@ def process_request(user_prompt: str, model: str = "llama3.2:1b") -> FirewallRes
     
     # ==================== Stage 3: Response Inspection ====================
     start = time.time()
-    response_result = inspect_response(llm_response)
+    response_result = _passthrough_response() if FIREWALL_MODE == "none" else inspect_response(llm_response)
     response_ms = (time.time() - start) * 1000
     
     if response_result.blocked:

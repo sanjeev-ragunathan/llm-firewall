@@ -2,3 +2,11 @@ fastapi
 uvicorn
 requests
 python-dotenv
+
+# Eval - datasets
+datasets>=2.18
+tqdm>=4.66
+pandas>=2.0
+matplotlib>=3.7
+transformers>=4.43
+torch>=2.1

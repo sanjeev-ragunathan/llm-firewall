@@ -24,14 +24,14 @@ Three OWASP threats. Two directions.
 
 <div class="table-center" markdown="1">
 
-| Threat | OWASP | Direction | Action |
-|---|---|---|---|
-| Direct prompt injection | LLM01 | Inbound | Block |
-| Indirect prompt injection (RAG, tools) | LLM01 | Inbound | Block |
-| User PII in prompts (high-risk) | LLM02 | Inbound | Block |
-| User PII in prompts (low-risk) | LLM02 | Inbound | Redact |
-| LLM echoing PII back | LLM02 | Outbound | Redact |
-| System prompt leakage | LLM07 | Outbound | Block |
+ | Threat | OWASP | Direction | Action |
+ |---|---|---|---|
+ | Direct prompt injection | LLM01 | Inbound | Block |
+ | Indirect prompt injection (RAG, tools) | LLM01 | Inbound | Block |
+ | User PII in prompts (high-risk) | LLM02 | Inbound | Block |
+ | User PII in prompts (low-risk) | LLM02 | Inbound | Redact |
+ | LLM echoing PII back | LLM02 | Outbound | Redact |
+ | System prompt leakage | LLM07 | Outbound | Block |
 
 </div>
 
@@ -71,18 +71,16 @@ Metric: end-to-end **handling rate** = firewall blocked OR LLM refused. (Product
 
 <img src="./eval/results/full/charts/attribution.png" width="100%">
 
-<div class="table-center" markdown="1">
- 
-| Track | N | FW block | LLM refuse | **Handled** | FPR |
-|---|---|---|---|---|---|
-| 🥇 System-prompt leak (outbound) | 15 | **100%** | 0% | **100%** | - |
-| 🥇 PII echo leak (outbound) | 15 | **80%** | 20% | **100%** | - |
-| 🥈 Inbound PII | 200 | 24% | 58% | **82%** | - |
-| 🥈 Direct injection | 28 attacks | 39% | 29% | **68%** | **0.0%** |
-| ⚠️ Indirect injection (BIPIA) | 91 attacks | 9% | 18% | 26% | 4.6% |
-| Benign control (Dolly-15k) | 200 | - | - | - | **0.0%** |
-
-</div>
+<center>
+ | Track | N | FW block | LLM refuse | **Handled** | FPR |
+ |---|---|---|---|---|---|
+ | 🥇 System-prompt leak (outbound) | 15 | **100%** | 0% | **100%** | - |
+ | 🥇 PII echo leak (outbound) | 15 | **80%** | 20% | **100%** | - |
+ | 🥈 Inbound PII | 200 | 24% | 58% | **82%** | - |
+ | 🥈 Direct injection | 28 attacks | 39% | 29% | **68%** | **0.0%** |
+ | ⚠️ Indirect injection (BIPIA) | 91 attacks | 9% | 18% | 26% | 4.6% |
+ | Benign control (Dolly-15k) | 200 | - | - | - | **0.0%** |
+</center>
 
 **Headlines:**
 - **100% handling on outbound leakage.** Without the firewall, Llama 3.2 1B leaks 60% of system-prompt probes (9 of 15). With CheesyWasp, zero.

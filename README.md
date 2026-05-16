@@ -1,8 +1,8 @@
-# 🧀 🐝 CheesyWasp - LLM Firewall
+# CheesyWasp - LLM Firewall
 
 > INFO-5940 Final Project
 
-<img src="./images/cheesywasp-banner.png" width="100%">
+<img src="./images/cheesywasp-banner-transparent-bg.png" width="100%">
 
 An LLM guardrail. Inspects prompts and responses in real time to block prompt injection and data leakage.
 

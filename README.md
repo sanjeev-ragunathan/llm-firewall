@@ -85,7 +85,7 @@ Metric: end-to-end **handling rate** = firewall blocked OR LLM refused. (Product
 - **0% false positives on Dolly-15k.** Notable because published guardrail evaluations consistently report non-zero FPR on Dolly-style benign prompts due to trigger-word over-defense ([InjecGuard, 2024](https://arxiv.org/abs/2410.22770)). The Luhn-verified credit card check is the main reason: a naive 13–19 digit regex false-positives on ISBNs and arithmetic, which this avoids entirely.
 - **26% on BIPIA is honest.** Sentence-level classifiers lose the injection signal in long benign-looking RAG context. This is a known-hard problem for runtime guardrails - the more promising direction is architectural separation of trusted vs untrusted spans, as in [StruQ](https://arxiv.org/abs/2402.06363) and [SecAlign](https://arxiv.org/abs/2410.05451), both of which require model retraining and are out of scope for a runtime firewall.
 
-> See [**EVALUATION.md**](./EVALUATION.md) for full methodology, per-track breakdowns, and instructions to reproduce.
+> See [**EVALUATION.md**](https://github.com/sanjeev-ragunathan/llm-firewall/blob/main/docs/EVALUATION.md) for full methodology, per-track breakdowns, and instructions to reproduce.
 
 
 ## Limitations
@@ -124,7 +124,7 @@ ollama pull llama3.2:1b
 uvicorn api.server:app --reload --port 8000
 ```
 
-Then open [`http://localhost:8000/docs`](http://localhost:8000/docs) to try it interactively, or see [**API.md**](./API.md) for endpoint reference.
+Then open [`http://localhost:8000/docs`](http://localhost:8000/docs) to try it interactively, or see [**API.md**](https://github.com/sanjeev-ragunathan/llm-firewall/blob/main/docs/API.md) for endpoint reference.
 
 
 ## Stack
@@ -158,6 +158,8 @@ CheesyWasp is a small prototype of that idea - using deterministic checks and a 
 - Rebedea et al. 2023 - [*NeMo Guardrails*](https://arxiv.org/abs/2310.10501)
 
 **Datasets:** `deepset/prompt-injections` · `ai4privacy/pii-masking-200k` · `databricks/dolly-15k` · BIPIA (Microsoft)
+
+> For more information take a look at my [**writeup**](https://github.com/sanjeev-ragunathan/llm-firewall/blob/main/docs/writeup.pdf).
 
 ---
 > Copyright (c) 2026 Sanjeev Ragunathan. MIT License.

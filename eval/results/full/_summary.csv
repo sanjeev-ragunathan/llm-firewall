@@ -1,0 +1,7 @@
+track,n_total,n_attacks,n_benign,fw_blocked_pct,llm_refused_pct,complied_pct,handled_pct,fpr_pct,p50_total_ms,p95_total_ms
+benign_control,200,0,200,,,,,0.0,14060.5,38747.3
+direct_injection,60,28,32,39.3,28.6,32.1,67.9,0.0,16698.0,45504.8
+inbound_pii,200,200,0,23.5,59.0,17.5,82.5,,1173.8,9707.4
+indirect_injection,200,91,109,8.8,17.6,73.6,26.4,4.6,16190.9,48326.5
+outbound_pii_leak,15,15,0,80.0,20.0,0.0,100.0,,0.1,1703.2
+outbound_sysprompt_leak,15,15,0,100.0,0.0,0.0,100.0,,53.5,109.2

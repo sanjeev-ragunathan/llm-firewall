@@ -60,8 +60,12 @@ def _find_credit_cards(text: str) -> list[str]:
 # These are the *other* high-risk patterns we block on sight.
 PII_HIGH_RISK_PATTERNS = [
     # SSN (US) — fixed format, low false-positive rate
-    r"\b\d{3}-\d{2}-\d{4}\b",
-    r"\bSSN[:\s]+\d{9}\b",
+    # SSN — multiple format support: dashes, spaces, dots, none, with optional SSN prefix
+    r"\b\d{3}-\d{2}-\d{4}\b",                                # 123-45-6789
+    r"\b\d{3}\s\d{2}\s\d{4}\b",                              # 123 45 6789
+    r"\b\d{3}\.\d{2}\.\d{4}\b",                              # 123.45.6789
+    r"(?i)\bSSN[:\s#]+\d{3}[-.\s]?\d{2}[-.\s]?\d{4}\b",     # SSN: 123-45-6789 or any sep
+    r"(?i)\bSSN[:\s#]+\d{9,11}\b",                           # SSN: 75661904310
 
     # API keys — specific prefixes, near-zero false positives
     r"\b(sk|pk|rk)[-_][a-zA-Z0-9-]{20,}\b",     # OpenAI sk-proj-..., Stripe, etc.
@@ -77,7 +81,8 @@ PII_LOW_RISK_PATTERNS = [
     # Email
     r"\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b",
     # Phone (US-ish)
-    r"\b\+?1?[-.\s]?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b",
+    # Phone (extended international support)
+    r"\b\+?\d{1,3}[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{0,4}\b",
 ]
 
 

@@ -162,3 +162,6 @@ CheesyWasp is a small prototype of that idea - using deterministic checks and a 
 - Rebedea et al. 2023 - [*NeMo Guardrails*](https://arxiv.org/abs/2310.10501)
 
 **Datasets:** `deepset/prompt-injections` · `ai4privacy/pii-masking-200k` · `databricks/dolly-15k` · BIPIA (Microsoft)
+
+---
+> Copyright (c) 2026 Sanjeev Ragunathan. MIT License.

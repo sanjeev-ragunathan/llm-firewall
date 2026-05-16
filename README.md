@@ -19,7 +19,7 @@ CheesyWasp sits between the user and the LLM. Every prompt and response passes t
 Three OWASP threats. Two directions.
 
 <center>
- <img src="./images/scope.png" width="80%">
+ <img src="./images/scope.png" width="60%">
 </center>
 
 <div class="table-center" markdown="1">
@@ -39,7 +39,7 @@ Three OWASP threats. Two directions.
 
 ## Architecture
 
-<img src="./images/architecture.png" width="100%">
+<img src="./images/architecture.png" width="60%">
 
 ### Prompt Inspector (inbound)
 
@@ -69,9 +69,10 @@ Evaluated on a **749-prompt, six-track suite** - one dataset per threat, drawn f
 
 Metric: end-to-end **handling rate** = firewall blocked OR LLM refused. (Production systems are layered; reporting only firewall block rate undercounts the joint defense.)
 
-<img src="./eval/results/full/charts/attribution.png" width="100%">
+<img src="./eval/results/full/charts/attribution.png" width="60%">
 
-<center>
+</center>
+
  | Track | N | FW block | LLM refuse | **Handled** | FPR |
  |---|---|---|---|---|---|
  | 🥇 System-prompt leak (outbound) | 15 | **100%** | 0% | **100%** | - |
@@ -80,6 +81,7 @@ Metric: end-to-end **handling rate** = firewall blocked OR LLM refused. (Product
  | 🥈 Direct injection | 28 attacks | 39% | 29% | **68%** | **0.0%** |
  | ⚠️ Indirect injection (BIPIA) | 91 attacks | 9% | 18% | 26% | 4.6% |
  | Benign control (Dolly-15k) | 200 | - | - | - | **0.0%** |
+
 </center>
 
 **Headlines:**

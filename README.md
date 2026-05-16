@@ -4,7 +4,7 @@
 
 <img src="./images/cheesywasp-banner.png" width="100%">
 
-An LLM guardrail. Inspects prompts and responses in real time to block prompt injection, jailbreaks, and data leakage.
+An LLM guardrail. Inspects prompts and responses in real time to block prompt injection and data leakage.
 
 *cheesywasp = swiss cheese + owasp*
 

@@ -22,6 +22,8 @@ Three OWASP threats. Two directions.
  <img src="./images/scope.png" width="80%">
 </center>
 
+<div class="table-center" markdown="1">
+
 | Threat | OWASP | Direction | Action |
 |---|---|---|---|
 | Direct prompt injection | LLM01 | Inbound | Block |
@@ -31,9 +33,9 @@ Three OWASP threats. Two directions.
 | LLM echoing PII back | LLM02 | Outbound | Redact |
 | System prompt leakage | LLM07 | Outbound | Block |
 
-**Explicitly out of scope: harmful-content requests (LLM05).** The model's alignment training already refuses those reliably - duplicating that work at the firewall layer adds latency and false positives without catching anything new.
+</div>
 
-<!-- --- -->
+**Explicitly out of scope: harmful-content requests (LLM05).** The model's alignment training already refuses those reliably - duplicating that work at the firewall layer adds latency and false positives without catching anything new.
 
 ## Architecture
 
@@ -69,6 +71,8 @@ Metric: end-to-end **handling rate** = firewall blocked OR LLM refused. (Product
 
 <img src="./eval/results/full/charts/attribution.png" width="100%">
 
+<div class="table-center" markdown="1">
+ 
 | Track | N | FW block | LLM refuse | **Handled** | FPR |
 |---|---|---|---|---|---|
 | 🥇 System-prompt leak (outbound) | 15 | **100%** | 0% | **100%** | - |
@@ -77,6 +81,8 @@ Metric: end-to-end **handling rate** = firewall blocked OR LLM refused. (Product
 | 🥈 Direct injection | 28 attacks | 39% | 29% | **68%** | **0.0%** |
 | ⚠️ Indirect injection (BIPIA) | 91 attacks | 9% | 18% | 26% | 4.6% |
 | Benign control (Dolly-15k) | 200 | - | - | - | **0.0%** |
+
+</div>
 
 **Headlines:**
 - **100% handling on outbound leakage.** Without the firewall, Llama 3.2 1B leaks 60% of system-prompt probes (9 of 15). With CheesyWasp, zero.

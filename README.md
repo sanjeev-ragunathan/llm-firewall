@@ -19,27 +19,25 @@ CheesyWasp sits between the user and the LLM. Every prompt and response passes t
 Three OWASP threats. Two directions.
 
 <center>
- <img src="./images/scope.png" width="60%">
+ <img src="./images/scope.png" width="70%" vspace=10>
 </center>
 
-<div class="table-center" markdown="1">
-
- | Threat | OWASP | Direction | Action |
- |---|---|---|---|
- | Direct prompt injection | LLM01 | Inbound | Block |
- | Indirect prompt injection (RAG, tools) | LLM01 | Inbound | Block |
- | User PII in prompts (high-risk) | LLM02 | Inbound | Block |
- | User PII in prompts (low-risk) | LLM02 | Inbound | Redact |
- | LLM echoing PII back | LLM02 | Outbound | Redact |
- | System prompt leakage | LLM07 | Outbound | Block |
-
-</div>
+| Threat | OWASP | Direction | Action |
+|---|---|---|---|
+| Direct prompt injection | LLM01 | Inbound | Block |
+| Indirect prompt injection (RAG, tools) | LLM01 | Inbound | Block |
+| User PII in prompts (high-risk) | LLM02 | Inbound | Block |
+| User PII in prompts (low-risk) | LLM02 | Inbound | Redact |
+| LLM echoing PII back | LLM02 | Outbound | Redact |
+| System prompt leakage | LLM07 | Outbound | Block |
 
 **Explicitly out of scope: harmful-content requests (LLM05).** The model's alignment training already refuses those reliably - duplicating that work at the firewall layer adds latency and false positives without catching anything new.
 
 ## Architecture
 
-<img src="./images/architecture.png" width="60%">
+<center>
+ <img src="./images/architecture.png" width="70%" vspace=10>
+</center>
 
 ### Prompt Inspector (inbound)
 
@@ -69,20 +67,18 @@ Evaluated on a **749-prompt, six-track suite** - one dataset per threat, drawn f
 
 Metric: end-to-end **handling rate** = firewall blocked OR LLM refused. (Production systems are layered; reporting only firewall block rate undercounts the joint defense.)
 
-<img src="./eval/results/full/charts/attribution.png" width="60%">
-
+<center>
+ <img src="./eval/results/full/charts/attribution.png" width="70%" vspace=10>
 </center>
 
- | Track | N | FW block | LLM refuse | **Handled** | FPR |
- |---|---|---|---|---|---|
- | 🥇 System-prompt leak (outbound) | 15 | **100%** | 0% | **100%** | - |
- | 🥇 PII echo leak (outbound) | 15 | **80%** | 20% | **100%** | - |
- | 🥈 Inbound PII | 200 | 24% | 58% | **82%** | - |
- | 🥈 Direct injection | 28 attacks | 39% | 29% | **68%** | **0.0%** |
- | ⚠️ Indirect injection (BIPIA) | 91 attacks | 9% | 18% | 26% | 4.6% |
- | Benign control (Dolly-15k) | 200 | - | - | - | **0.0%** |
-
-</center>
+| Track | N | FW block | LLM refuse | **Handled** | FPR |
+|---|---|---|---|---|---|
+| 🥇 System-prompt leak (outbound) | 15 | **100%** | 0% | **100%** | - |
+| 🥇 PII echo leak (outbound) | 15 | **80%** | 20% | **100%** | - |
+| 🥈 Inbound PII | 200 | 24% | 58% | **82%** | - |
+| 🥈 Direct injection | 28 attacks | 39% | 29% | **68%** | **0.0%** |
+| ⚠️ Indirect injection (BIPIA) | 91 attacks | 9% | 18% | 26% | 4.6% |
+| Benign control (Dolly-15k) | 200 | - | - | - | **0.0%** |
 
 **Headlines:**
 - **100% handling on outbound leakage.** Without the firewall, Llama 3.2 1B leaks 60% of system-prompt probes (9 of 15). With CheesyWasp, zero.

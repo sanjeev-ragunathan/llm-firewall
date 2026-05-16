@@ -40,15 +40,17 @@ Three OWASP threats. Two directions.
 <img src="./images/architecture.png" width="100%">
 
 ### Prompt Inspector (inbound)
+
 | Layer | Method | Catches | Cost |
-| --------- | --------- | --------- | --------- |
-| **L1 - Pattern Layer** | Compiled regex, Luhn-verified card check, PII / credential patterns | Known injection templates, high-risk PII (cards, SSNs, API keys, passwords), system-prompt extraction phrasing | <1 ms |
+|---|---|---|---|
+| **L1 - Pattern Layer** | Compiled regex, Luhn-verified card check, PII / credential patterns | Known injection templates, high-risk PII including cards, SSNs, API keys, passwords, and system-prompt extraction phrasing | &lt;1 ms |
 | **L2 - Semantic Layer** | ProtectAI DeBERTa-v3 prompt-injection classifier | Paraphrased injections and jailbreaks that L1 misses | ~50 ms |
 
 ### Response Inspector (outbound)
+
 | Layer | Method | Catches |
-| --------- | --------- | --------- |
-| **L1 - Disclosure & PII patterns** | Regex over model output | System-prompt disclosure phrasings, PII in responses |
+|---|---|---|
+| **L1 - Disclosure & PII patterns** | Regex over model output | System-prompt disclosure phrasings and PII in responses |
 
 ### Three actions
 

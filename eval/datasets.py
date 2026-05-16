@@ -68,8 +68,19 @@ def load_direct_injection(n: int | None = None, seed: int = 42) -> List[EvalProm
         text = r.get("text") or ""
         if not text.strip():
             continue
-        # Filter to English only - simple ASCII heuristic, good enough for this dataset
-        if sum(1 for c in text if ord(c) > 127) > len(text) * 0.05:
+        # English only - drop any row with non-ASCII OR common non-English stopwords
+        if any(ord(c) > 127 for c in text):
+            continue
+        lower = f" {text.lower()} "
+        non_english_markers = (
+            " der ", " die ", " das ", " den ", " dem ", " ist ", " und ", " ich ",
+            " wie ", " was ", " sind ", " nicht ", " mit ", " sich ", " auf ",
+            " für ", " bei ", " ein ", " eine ", " einen ", " einem ", " zu ",
+            " von ", " im ", " du ", " sie ", " wir ", " ihr ", " mein ", " dein ",
+            " que ", " los ", " las ", " del ", " por ", " con ", " una ",
+            " yo ", " tu ", " si ", " no ",
+        )
+        if any(m in lower for m in non_english_markers):
             continue
         lbl = int(r.get("label", 0))
         out.append(EvalPrompt(

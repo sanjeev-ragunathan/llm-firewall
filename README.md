@@ -18,9 +18,9 @@ CheesyWasp sits between the user and the LLM. Every prompt and response passes t
 
 Three OWASP threats. Two directions.
 
-<center>
- <img src="./images/scope.png" width="70%" vspace=10>
-</center>
+<!-- <center> -->
+ <img src="./images/scope.png" width="80%" vspace=10>
+<!-- </center> -->
 
 | Threat | OWASP | Direction | Action |
 |---|---|---|---|
@@ -35,9 +35,9 @@ Three OWASP threats. Two directions.
 
 ## Architecture
 
-<center>
- <img src="./images/architecture.png" width="70%" vspace=10>
-</center>
+<!-- <center> -->
+ <img src="./images/architecture.png" width="80%" vspace=10>
+<!-- </center> -->
 
 ### Prompt Inspector (inbound)
 
@@ -67,9 +67,9 @@ Evaluated on a **749-prompt, six-track suite** - one dataset per threat, drawn f
 
 Metric: end-to-end **handling rate** = firewall blocked OR LLM refused. (Production systems are layered; reporting only firewall block rate undercounts the joint defense.)
 
-<center>
- <img src="./eval/results/full/charts/attribution.png" width="70%" vspace=10>
-</center>
+<!-- <center> -->
+ <img src="./eval/results/full/charts/attribution.png" width="80%" vspace=10>
+<!-- </center> -->
 
 | Track | N | FW block | LLM refuse | **Handled** | FPR |
 |---|---|---|---|---|---|

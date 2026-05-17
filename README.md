@@ -159,7 +159,7 @@ CheesyWasp is a small prototype of that idea - using deterministic checks and a 
 
 **Datasets:** `deepset/prompt-injections` · `ai4privacy/pii-masking-200k` · `databricks/dolly-15k` · BIPIA (Microsoft)
 
-> For more information take a look at my [**writeup**](https://github.com/sanjeev-ragunathan/llm-firewall/blob/main/docs/writeup.pdf).
+> For more information take a look at my [**writeup**](https://github.com/sanjeev-ragunathan/llm-firewall/blob/main/docs/writeup.pdf) and [**slides**](https://github.com/sanjeev-ragunathan/llm-firewall/blob/main/docs/presentation-slides.pdf).
 
 ---
 > Copyright (c) 2026 Sanjeev Ragunathan. MIT License.
